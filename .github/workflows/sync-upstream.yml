@@ -40,24 +40,29 @@ jobs:
           git checkout -B kv origin/main
 
           python - <<'PY'
-from pathlib import Path
+          import re
+          from pathlib import Path
 
-path = Path("wrangler.toml")
-text = path.read_text(encoding="utf-8")
-old = """[[r2_buckets]]
-binding = "ATTACHMENTS"
-bucket_name = "nodewarden-attachments"
-"""
-new = """[[kv_namespaces]]
-binding = "ATTACHMENTS_KV"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
-"""
+          path = Path("wrangler.toml")
+          text = path.read_text(encoding="utf-8")
 
-if old not in text:
-    raise SystemExit("Expected R2 block not found in wrangler.toml")
+          pattern = (
+              r"\[\[r2_buckets\]\]\s*"
+              r'binding\s*=\s*"ATTACHMENTS"\s*'
+              r'bucket_name\s*=\s*"nodewarden-attachments"\s*'
+          )
+          replacement = (
+              '[[kv_namespaces]]\n'
+              'binding = "ATTACHMENTS_KV"\n'
+              'id = "REPLACE_WITH_KV_NAMESPACE_ID"\n'
+          )
 
-path.write_text(text.replace(old, new, 1), encoding="utf-8")
-PY
+          new_text, count = re.subn(pattern, replacement, text, count=1)
+          if count == 0:
+              raise SystemExit("Expected R2 block not found in wrangler.toml")
+
+          path.write_text(new_text, encoding="utf-8")
+          PY
 
           git add wrangler.toml
           git commit -m "chore(kv): sync from main" || echo "No changes"
