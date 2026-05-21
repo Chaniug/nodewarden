@@ -175,6 +175,16 @@ export function normalizeCipherLoginForCompatibility(login: any): any {
   return next;
 }
 
+function hasMissingLoginUriChecksum(cipher: Cipher): boolean {
+  if (!cipher.key || !cipher.login || typeof cipher.login !== 'object') return false;
+  const uris = (cipher.login as any).uris;
+  if (!Array.isArray(uris)) return false;
+  return uris.some((uri: any) => {
+    if (!uri || typeof uri !== 'object') return false;
+    return isValidEncString(uri.uri) && !isValidEncString(uri.uriChecksum);
+  });
+}
+
 function normalizeFido2CredentialsForCompatibility(credentials: any): any[] | null {
   if (!Array.isArray(credentials) || credentials.length === 0) return null;
   const requiredEncryptedKeys = [
@@ -677,6 +687,10 @@ export async function handleCreateCipher(request: Request, env: Env, userId: str
     if (!folderOk) return errorResponse('Folder not found', 404);
   }
 
+  if (hasMissingLoginUriChecksum(cipher)) {
+    return errorResponse('Login URI checksum is required for item-key encrypted ciphers. Refresh NodeWarden and save the item again.', 400);
+  }
+
   await storage.saveCipher(cipher);
   const revisionDate = await storage.updateRevisionDate(userId);
   notifyVaultSyncForRequest(request, env, userId, revisionDate);
@@ -770,6 +784,10 @@ export async function handleUpdateCipher(request: Request, env: Env, userId: str
   if (cipher.folderId) {
     const folderOk = await verifyFolderOwnership(storage, cipher.folderId, userId);
     if (!folderOk) return errorResponse('Folder not found', 404);
+  }
+
+  if (hasMissingLoginUriChecksum(cipher)) {
+    return errorResponse('Login URI checksum is required for item-key encrypted ciphers. Refresh NodeWarden and save the item again.', 400);
   }
 
   await syncIncomingAttachmentMetadata(storage, cipher.id, cipherData);
