@@ -155,10 +155,10 @@ export class AuthService {
     return SERVER_HASH_PREFIX + btoa(binary);
   }
 
-  // Verify password: hash the input the same way, then constant-time compare.
+  // Verify password: new rows use server-side hashing; legacy rows store the raw client hash.
   async verifyPassword(inputHash: string, storedHash: string, email: string): Promise<boolean> {
     if (!storedHash.startsWith(SERVER_HASH_PREFIX)) {
-      return false;
+      return this.constantTimeEquals(inputHash, storedHash);
     }
     const serverHash = await this.hashPasswordServer(inputHash, email);
     return this.constantTimeEquals(serverHash, storedHash);
