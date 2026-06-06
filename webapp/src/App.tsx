@@ -26,7 +26,7 @@ import { clearAuditLogs, getAuditLogSettings, listAdminInvites, listAdminUsers, 
 import { getDomainRules, saveDomainRules } from '@/lib/api/domains';
 import { getSends } from '@/lib/api/send';
 import { repairCipherKeyMismatches, repairCipherUriChecksums } from '@/lib/api/vault';
-import { getCachedVaultCoreSnapshot, loadVaultCoreSyncSnapshot } from '@/lib/api/vault-sync';
+import { getCachedVaultCoreSnapshot, invalidateVaultCoreSyncSnapshot, loadVaultCoreSyncSnapshot } from '@/lib/api/vault-sync';
 import { silentlyRepairBackupSettingsIfNeeded } from '@/lib/backup-settings-repair';
 import {
   parseSignalRTextFrames,
@@ -1086,12 +1086,18 @@ export default function App() {
         const repairKey = `${session.accessToken}:${encryptedCiphers.map((cipher) => `${cipher.id}:${cipher.revisionDate || ''}`).join(',')}`;
         if (uriChecksumRepairAttemptRef.current !== repairKey) {
           uriChecksumRepairAttemptRef.current = repairKey;
-          void Promise.all([
-            repairCipherKeyMismatches(authedFetch, session, result.ciphers),
-            repairCipherUriChecksums(authedFetch, session, result.ciphers),
-          ])
-            .then(([keyMismatchCount, uriChecksumCount]) => {
-              if (keyMismatchCount + uriChecksumCount > 0) void refetchVaultCoreData();
+          void repairCipherKeyMismatches(authedFetch, session, result.ciphers)
+            .then(async (keyMismatchCount) => {
+              if (keyMismatchCount > 0) {
+                await invalidateVaultCoreSyncSnapshot(vaultCacheKey);
+                void refetchVaultCoreData();
+                return;
+              }
+              const uriChecksumCount = await repairCipherUriChecksums(authedFetch, session, result.ciphers);
+              if (uriChecksumCount > 0) {
+                await invalidateVaultCoreSyncSnapshot(vaultCacheKey);
+                void refetchVaultCoreData();
+              }
             })
             .catch(() => {
               // Best-effort compatibility repair must not interrupt normal vault loading.
@@ -1109,7 +1115,7 @@ export default function App() {
     return () => {
       active = false;
     };
-  }, [session?.symEncKey, session?.symMacKey, encryptedFolders, encryptedCiphers]);
+  }, [session?.symEncKey, session?.symMacKey, vaultCacheKey, encryptedFolders, encryptedCiphers]);
 
   useEffect(() => {
     if (IS_DEMO_MODE) return;

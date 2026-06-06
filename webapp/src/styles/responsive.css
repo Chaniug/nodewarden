@@ -898,6 +898,8 @@
   }
 
   .settings-module select.input {
+    padding-top: 0;
+    padding-bottom: 0;
     padding-right: 30px;
     background-position:
       calc(100% - 15px) calc(50% - 3px),

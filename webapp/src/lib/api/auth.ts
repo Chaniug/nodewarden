@@ -453,6 +453,7 @@ export function createAuthedFetch(getSession: () => SessionState | null, setSess
     if (!session?.accessToken) throw new Error('Unauthorized');
     const headers = new Headers(init.headers || {});
     headers.set('Authorization', `Bearer ${session.accessToken}`);
+    headers.set('X-NodeWarden-Web', '1');
 
     let resp = await retryableRequest(headers);
     if (resp.status !== 401 || (!session.refreshToken && session.authMode !== 'web-cookie')) return resp;
@@ -461,6 +462,7 @@ export function createAuthedFetch(getSession: () => SessionState | null, setSess
     if (latest?.accessToken && latest.accessToken !== session.accessToken) {
       const latestHeaders = new Headers(init.headers || {});
       latestHeaders.set('Authorization', `Bearer ${latest.accessToken}`);
+      latestHeaders.set('X-NodeWarden-Web', '1');
       resp = await retryableRequest(latestHeaders);
       if (resp.status !== 401) return resp;
     }
@@ -486,6 +488,7 @@ export function createAuthedFetch(getSession: () => SessionState | null, setSess
 
     const retryHeaders = new Headers(init.headers || {});
     retryHeaders.set('Authorization', `Bearer ${nextSession.accessToken}`);
+    retryHeaders.set('X-NodeWarden-Web', '1');
     resp = await retryableRequest(retryHeaders);
     return resp;
   };

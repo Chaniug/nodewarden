@@ -1,7 +1,7 @@
 import { Env, SyncResponse, CipherResponse, FolderResponse, ProfileResponse } from '../types';
 import { StorageService } from '../services/storage';
 import { errorResponse } from '../utils/response';
-import { cipherToResponse, isCipherResponseSyncCompatible } from './ciphers';
+import { cipherToResponse, isCipherResponseSyncCompatible, shouldPreserveRepairableCipherUris } from './ciphers';
 import { sendToResponse } from './sends';
 import { LIMITS } from '../config/limits';
 import {
@@ -16,10 +16,17 @@ import { buildDomainsResponse } from '../services/domain-rules';
 // Filtering invalid cipher responses here protects clients from stored rows that
 // would otherwise make official apps fail after an HTTP 200 sync.
 // Keep this aligned with src/handlers/ciphers.ts when adding new vault fields.
-function buildSyncCacheRequest(request: Request, userId: string, revisionDate: string, excludeDomains: boolean, excludeSends: boolean): Request {
+function buildSyncCacheRequest(
+  request: Request,
+  userId: string,
+  revisionDate: string,
+  excludeDomains: boolean,
+  excludeSends: boolean,
+  preserveRepairableUris: boolean
+): Request {
   const url = new URL(request.url);
   const cacheUrl = new URL(
-    `/__nodewarden/cache/sync/${encodeURIComponent(userId)}/${encodeURIComponent(revisionDate)}/${excludeDomains ? '1' : '0'}/${excludeSends ? '1' : '0'}`,
+    `/__nodewarden/cache/sync/${encodeURIComponent(userId)}/${encodeURIComponent(revisionDate)}/${excludeDomains ? '1' : '0'}/${excludeSends ? '1' : '0'}/${preserveRepairableUris ? '1' : '0'}`,
     url.origin
   );
   return new Request(cacheUrl.toString(), { method: 'GET' });
@@ -43,6 +50,7 @@ export async function handleSync(request: Request, env: Env, userId: string): Pr
   const excludeDomains = excludeDomainsParam !== null && /^(1|true|yes)$/i.test(excludeDomainsParam);
   const excludeSendsParam = url.searchParams.get('excludeSends');
   const excludeSends = excludeSendsParam !== null && /^(1|true|yes)$/i.test(excludeSendsParam);
+  const preserveRepairableUris = shouldPreserveRepairableCipherUris(request);
 
   const user = await storage.getUserById(userId);
   if (!user) {
@@ -50,7 +58,7 @@ export async function handleSync(request: Request, env: Env, userId: string): Pr
   }
 
   const revisionDate = await storage.getRevisionDate(userId);
-  const cacheRequest = buildSyncCacheRequest(request, userId, revisionDate, excludeDomains, excludeSends);
+  const cacheRequest = buildSyncCacheRequest(request, userId, revisionDate, excludeDomains, excludeSends, preserveRepairableUris);
   const cachedResponse = await readSyncCache(cacheRequest);
   if (cachedResponse) {
     return cachedResponse;
@@ -93,7 +101,7 @@ export async function handleSync(request: Request, env: Env, userId: string): Pr
 
   const cipherResponses: CipherResponse[] = [];
   for (const cipher of ciphers) {
-    const response = cipherToResponse(cipher, attachmentsByCipher.get(cipher.id) || []);
+    const response = cipherToResponse(cipher, attachmentsByCipher.get(cipher.id) || [], { preserveRepairableUris });
     if (isCipherResponseSyncCompatible(response)) {
       cipherResponses.push(response);
     }

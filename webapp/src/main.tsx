@@ -16,6 +16,7 @@ const queryClient = new QueryClient({
 });
 
 const root = document.getElementById('root')!;
+root.setAttribute('translate', 'no');
 
 function renderApp(): void {
   render(
@@ -26,8 +27,6 @@ function renderApp(): void {
   );
 }
 
-renderApp();
-
-void initI18n().then(() => {
+void initI18n().finally(() => {
   renderApp();
 });
