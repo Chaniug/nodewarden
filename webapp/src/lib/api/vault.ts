@@ -927,6 +927,7 @@ export async function repairCipherUriChecksums(
         ? cipher.fields.map(({ decName: _decName, decValue: _decValue, ...field }) => field)
         : null,
       lastKnownRevisionDate: cipher.revisionDate ?? null,
+      preserveRevisionDate: true,
     };
     if (keys.key) payload.key = keys.key;
 
@@ -1091,7 +1092,9 @@ export async function repairCipherKeyMismatches(
     if (!cipher?.id || !looksLikeCipherString(cipher.key)) continue;
     if (!(await hasItemKeyFieldMismatch(cipher, userEnc, userMac))) continue;
     if (hasUnresolvedEncryptedFields(cipher)) continue;
-    await updateCipher(authedFetch, session, cipher, draftFromDecryptedCipher(cipher));
+    await updateCipher(authedFetch, session, cipher, draftFromDecryptedCipher(cipher), {
+      preserveRevisionDate: true,
+    });
     repaired += 1;
   }
 
@@ -1225,9 +1228,13 @@ export async function updateCipher(
   authedFetch: AuthedFetch,
   session: SessionState,
   cipher: Cipher,
-  draft: VaultDraft
+  draft: VaultDraft,
+  extraPayload?: Record<string, unknown>
 ): Promise<Cipher> {
   const payload = await buildCipherPayload(session, draft, cipher);
+  if (extraPayload) {
+    Object.assign(payload, extraPayload);
+  }
 
   const resp = await authedFetch(`/api/ciphers/${encodeURIComponent(cipher.id)}`, {
     method: 'PUT',

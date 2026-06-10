@@ -49,3 +49,9 @@ settings.json
 .claude/
 NodeWarden-compat/
 .codex-upstream/
+.codex-upstream/bitwarden-server/
+.codex-upstream/bitwarden-clients/
+.codex-upstream/bitwarden-web/
+.codex-upstream/bitwarden-browser/
+
+.reasonix/

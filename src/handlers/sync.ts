@@ -10,6 +10,7 @@ import {
   buildUserDecryptionOptions,
 } from '../utils/user-decryption';
 import { buildDomainsResponse } from '../services/domain-rules';
+import { buildWebAuthnPrfOption } from '../utils/account-passkeys';
 
 // CONTRACT:
 // /api/sync reuses cipherToResponse() as the single cipher response shaper.
@@ -20,13 +21,14 @@ function buildSyncCacheRequest(
   request: Request,
   userId: string,
   revisionDate: string,
+  accountPasskeyCacheTag: string,
   excludeDomains: boolean,
   excludeSends: boolean,
   preserveRepairableUris: boolean
 ): Request {
   const url = new URL(request.url);
   const cacheUrl = new URL(
-    `/__nodewarden/cache/sync/${encodeURIComponent(userId)}/${encodeURIComponent(revisionDate)}/${excludeDomains ? '1' : '0'}/${excludeSends ? '1' : '0'}/${preserveRepairableUris ? '1' : '0'}`,
+    `/__nodewarden/cache/sync/${encodeURIComponent(userId)}/${encodeURIComponent(revisionDate)}/${encodeURIComponent(accountPasskeyCacheTag)}/${excludeDomains ? '1' : '0'}/${excludeSends ? '1' : '0'}/${preserveRepairableUris ? '1' : '0'}`,
     url.origin
   );
   return new Request(cacheUrl.toString(), { method: 'GET' });
@@ -57,8 +59,19 @@ export async function handleSync(request: Request, env: Env, userId: string): Pr
     return errorResponse('User not found', 404);
   }
 
-  const revisionDate = await storage.getRevisionDate(userId);
-  const cacheRequest = buildSyncCacheRequest(request, userId, revisionDate, excludeDomains, excludeSends, preserveRepairableUris);
+  const [revisionDate, accountPasskeys] = await Promise.all([
+    storage.getRevisionDate(userId),
+    storage.getAccountPasskeyCredentialsByUserId(userId),
+  ]);
+  const accountPasskeyCacheTag = accountPasskeys
+    .map((credential) => [
+      credential.id,
+      credential.updatedAt,
+      credential.supportsPrf ? '1' : '0',
+      credential.encryptedUserKey && credential.encryptedPublicKey && credential.encryptedPrivateKey ? '1' : '0',
+    ].join(':'))
+    .join(',');
+  const cacheRequest = buildSyncCacheRequest(request, userId, revisionDate, accountPasskeyCacheTag, excludeDomains, excludeSends, preserveRepairableUris);
   const cachedResponse = await readSyncCache(cacheRequest);
   if (cachedResponse) {
     return cachedResponse;
@@ -72,7 +85,10 @@ export async function handleSync(request: Request, env: Env, userId: string): Pr
     excludeDomains ? Promise.resolve(null) : storage.getUserDomainSettings(userId),
   ]);
   const accountKeys = buildAccountKeys(user);
-  const userDecryptionOptions = buildUserDecryptionOptions(user);
+  const webAuthnPrfOptions = accountPasskeys
+    .map(buildWebAuthnPrfOption)
+    .filter((option): option is NonNullable<typeof option> => !!option);
+  const userDecryptionOptions = buildUserDecryptionOptions(user, webAuthnPrfOptions[0] || null);
 
   const profile: ProfileResponse = {
     id: user.id,
@@ -138,6 +154,8 @@ export async function handleSync(request: Request, env: Env, userId: string): Pr
       MasterPasswordUnlock: userDecryptionOptions.MasterPasswordUnlock,
       TrustedDeviceOption: null,
       KeyConnectorOption: null,
+      WebAuthnPrfOption: webAuthnPrfOptions[0] || null,
+      WebAuthnPrfOptions: webAuthnPrfOptions,
       Object: 'userDecryption',
     },
     UserDecryptionOptions: userDecryptionOptions,

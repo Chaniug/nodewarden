@@ -2,6 +2,7 @@ import { render } from 'preact';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import { initI18n } from './lib/i18n';
+import { registerNodeWardenServiceWorker } from './lib/pwa';
 import './tailwind.css';
 import './styles.css';
 
@@ -29,4 +30,5 @@ function renderApp(): void {
 
 void initI18n().finally(() => {
   renderApp();
+  registerNodeWardenServiceWorker();
 });
