@@ -133,7 +133,10 @@
   }
 
   .topbar-actions > .network-status-badge {
-    @apply h-8 px-2 text-[0];
+    @apply inline-flex h-9 w-9 min-w-9 justify-center gap-0 rounded-xl p-0 text-[0];
+    background: color-mix(in srgb, var(--panel) 88%, transparent);
+    border-color: var(--line);
+    box-shadow: none;
   }
 
   .topbar-actions > .network-status-badge svg {
@@ -142,7 +145,10 @@
 
   .mobile-sidebar-toggle,
   .mobile-lock-btn {
-    @apply inline-flex h-9 w-9 min-w-9 justify-center gap-0 p-0 text-[0];
+    @apply inline-flex h-9 w-9 min-w-9 justify-center gap-0 rounded-xl p-0 text-[0];
+    background: color-mix(in srgb, var(--panel) 88%, transparent);
+    border-color: var(--line);
+    box-shadow: none;
   }
 
   .mobile-sidebar-toggle .btn-icon,
@@ -155,8 +161,44 @@
   }
 
   .mobile-theme-btn .theme-switch {
-    transform: scale(0.8);
+    @apply h-9 w-9 rounded-xl border;
+    background: color-mix(in srgb, var(--panel) 88%, transparent);
+    border-color: var(--line);
+    box-shadow: none;
+    transform: none;
     transform-origin: center;
+  }
+
+  .mobile-theme-btn .theme-switch-slider,
+  .mobile-theme-btn .theme-switch-slider::before {
+    @apply hidden;
+  }
+
+  .mobile-theme-btn .theme-switch .sun svg,
+  .mobile-theme-btn .theme-switch .moon svg {
+    @apply h-[18px] w-[18px];
+    top: 7px;
+    left: 8px;
+    z-index: 1;
+    opacity: 0;
+    transform: none;
+  }
+
+  .mobile-theme-btn .theme-switch.unchecked .sun svg,
+  .mobile-theme-btn .theme-switch.checked .moon svg {
+    opacity: 1;
+  }
+
+  .mobile-theme-btn .theme-switch.checked .moon svg {
+    fill: var(--primary);
+  }
+
+  .topbar-actions > .network-status-badge:hover,
+  .mobile-sidebar-toggle:hover,
+  .mobile-lock-btn:hover,
+  .mobile-theme-btn .theme-switch:hover {
+    background: var(--panel-subtle);
+    border-color: color-mix(in srgb, var(--primary) 28%, var(--line));
   }
 
   .app-main {
@@ -352,11 +394,11 @@
   }
 
   .sort-trigger.sort-trigger-labeled {
-    @apply h-[34px] w-[34px] min-w-[34px] gap-0 px-0 text-[0];
+    @apply h-[34px] w-auto min-w-0 gap-1.5 px-3 text-[13px];
   }
 
   .sort-trigger.sort-trigger-labeled .btn-icon {
-    @apply m-0;
+    @apply mr-0;
   }
 
   .desktop-create-menu-wrap {

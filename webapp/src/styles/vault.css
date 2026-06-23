@@ -256,6 +256,20 @@ select.input.duplicate-mode-toolbar-select {
   @apply h-[34px] whitespace-nowrap rounded-[10px] px-3 py-0 text-[13px];
 }
 
+.list-head .btn,
+.list-head .search-input,
+.list-head .sort-trigger,
+.list-head .list-icon-btn {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+.list-head .btn:hover:not(:disabled),
+.list-head .btn:active:not(:disabled) {
+  transform: none !important;
+}
+
 .mobile-vault-filter-row {
   @apply hidden;
 }
