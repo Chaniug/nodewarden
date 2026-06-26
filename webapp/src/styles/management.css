@@ -193,6 +193,18 @@
   line-height: 1.5;
 }
 
+.backup-recommendation-step a {
+  color: #1d4ed8;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.backup-recommendation-step a:hover,
+.backup-recommendation-step a:focus-visible {
+  color: #1742b0;
+}
+
 .backup-recommendation-inline-note {
   color: #475467;
   line-height: 1.5;

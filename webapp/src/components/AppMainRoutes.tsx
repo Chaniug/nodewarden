@@ -275,11 +275,6 @@ export default function AppMainRoutes(props: AppMainRoutesProps) {
                 onCreateAccountPasskey={props.onCreateAccountPasskey}
                 onEnableAccountPasskeyDirectUnlock={props.onEnableAccountPasskeyDirectUnlock}
                 onDeleteAccountPasskey={props.onDeleteAccountPasskey}
-                pendingAuthRequests={props.pendingAuthRequests}
-                pendingAuthRequestsLoading={props.pendingAuthRequestsLoading}
-                onRefreshPendingAuthRequests={props.onRefreshPendingAuthRequests}
-                onApproveAuthRequest={props.onApproveAuthRequest}
-                onDenyAuthRequest={props.onDenyAuthRequest}
                 onLockTimeoutChange={props.onLockTimeoutChange}
                 onSessionTimeoutActionChange={props.onSessionTimeoutActionChange}
                 onNotify={props.onNotify}

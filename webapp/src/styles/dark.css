@@ -351,6 +351,15 @@
   color: var(--muted);
 }
 
+:root[data-theme='dark'] .backup-recommendation-step a {
+  color: var(--primary);
+}
+
+:root[data-theme='dark'] .backup-recommendation-step a:hover,
+:root[data-theme='dark'] .backup-recommendation-step a:focus-visible {
+  color: var(--primary-strong);
+}
+
 :root[data-theme='dark'] .restore-progress-overlay {
   background: var(--overlay-strong);
   backdrop-filter: blur(8px);
