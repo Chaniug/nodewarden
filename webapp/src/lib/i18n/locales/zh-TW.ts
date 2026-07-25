@@ -514,6 +514,7 @@ const zhTW: Record<string, string> = {
   "txt_create_account": "創建賬戶",
   "txt_registering": "正在註冊...",
   "txt_register_failed": "註冊失敗",
+  "txt_web_crypto_unavailable": "目前瀏覽器環境無法使用安全加密。請透過 HTTPS 開啟 NodeWarden，並使用受支援的現代瀏覽器。",
   "txt_create_folder": "創建文件夾",
   "txt_create_folder_failed": "創建文件夾失敗",
   "txt_create_item_failed": "創建項目失敗",

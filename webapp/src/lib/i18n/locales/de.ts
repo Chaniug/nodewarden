@@ -511,6 +511,7 @@ const de: Record<string, string> = {
   "txt_create_account": "Konto erstellen",
   "txt_registering": "Konto wird erstellt...",
   "txt_register_failed": "Registrierung fehlgeschlagen",
+  "txt_web_crypto_unavailable": "Sichere Browser-Kryptografie ist nicht verfügbar. Öffnen Sie NodeWarden über HTTPS in einem unterstützten Browser.",
   "txt_create_folder": "Ordner erstellen",
   "txt_create_folder_failed": "Fehler beim Erstellen des Ordners",
   "txt_create_item_failed": "Fehler beim Erstellen des Eintrags",

@@ -511,6 +511,7 @@ const fi: Record<string, string> = {
   "txt_create_account": "Luo tili",
   "txt_registering": "Luodaan tiliä...",
   "txt_register_failed": "Rekisteröinti epäonnistui",
+  "txt_web_crypto_unavailable": "Selaimen suojattu salaus ei ole käytettävissä. Avaa NodeWarden HTTPS-yhteydellä tuetussa selaimessa.",
   "txt_create_folder": "Luo kansio",
   "txt_create_folder_failed": "Kansion luonti epäonnistui",
   "txt_create_item_failed": "Nimikkeen luonti epäonnistui",

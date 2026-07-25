@@ -534,6 +534,7 @@ const en: Record<string, string> = {
   "txt_create_account": "Create Account",
   "txt_registering": "Creating account...",
   "txt_register_failed": "Register failed",
+  "txt_web_crypto_unavailable": "Secure browser cryptography is unavailable. Open NodeWarden over HTTPS in a supported browser.",
   "txt_create_folder": "Create Folder",
   "txt_create_folder_failed": "Create folder failed",
   "txt_create_item_failed": "Create item failed",

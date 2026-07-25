@@ -511,6 +511,7 @@ const ru: Record<string, string> = {
   "txt_create_account": "Создать учетную запись",
   "txt_registering": "Создание учетной записи...",
   "txt_register_failed": "Не удалось зарегистрироваться",
+  "txt_web_crypto_unavailable": "Безопасная криптография браузера недоступна. Откройте NodeWarden по HTTPS в поддерживаемом браузере.",
   "txt_create_folder": "Создать папку",
   "txt_create_folder_failed": "Создать папку не удалось",
   "txt_create_item_failed": "Создать элемент не удалось",

@@ -514,6 +514,7 @@ const zhCN: Record<string, string> = {
   "txt_create_account": "创建账户",
   "txt_registering": "正在注册...",
   "txt_register_failed": "注册失败",
+  "txt_web_crypto_unavailable": "当前浏览器环境无法使用安全加密。请通过 HTTPS 打开 NodeWarden，并使用受支持的现代浏览器。",
   "txt_create_folder": "创建文件夹",
   "txt_create_folder_failed": "创建文件夹失败",
   "txt_create_item_failed": "创建项目失败",

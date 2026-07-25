@@ -511,6 +511,7 @@ const fr: Record<string, string> = {
   "txt_create_account": "Créer un compte",
   "txt_registering": "Création du compte...",
   "txt_register_failed": "L'inscription a échoué",
+  "txt_web_crypto_unavailable": "La cryptographie sécurisée du navigateur n’est pas disponible. Ouvrez NodeWarden via HTTPS dans un navigateur compatible.",
   "txt_create_folder": "Créer un dossier",
   "txt_create_folder_failed": "La création du dossier a échoué",
   "txt_create_item_failed": "La création de l'élément a échoué",

@@ -15,6 +15,11 @@
     "domains:sync": "node scripts/sync-global-domains.mjs",
     "i18n": "node scripts/i18n-validate.cjs",
     "i18n:validate": "node scripts/i18n-validate.cjs",
+    "test:config-compatibility": "tsx --test scripts/config-compatibility.test.ts",
+    "test:web-crypto": "tsx --test scripts/web-crypto-availability.test.ts",
+    "test:webauthn-mobile": "node --test scripts/webauthn-mobile-connector.test.mjs",
+    "test:webauthn-connector": "node --test scripts/webauthn-connector.test.mjs && tsx --test scripts/webauthn-connector-headers.test.ts",
+    "test:webauthn-connectors": "node --test scripts/webauthn-mobile-connector.test.mjs scripts/webauthn-connector.test.mjs && tsx --test scripts/webauthn-connector-headers.test.ts",
     "deploy": "wrangler deploy",
     "deploy:kv": "node scripts/ensure-kv.cjs && wrangler deploy -c wrangler.kv.toml",
     "deploy:demo": "npm run build:demo && wrangler pages deploy dist --project-name nw-demo"
@@ -46,7 +51,8 @@
     "undici": ">=7.28.0",
     "@babel/core": ">=7.29.6",
     "esbuild": ">=0.28.1",
-    "ws": "8.21.0"
+    "ws": "8.21.0",
+    "sharp": "0.35.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260630.1",

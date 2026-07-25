@@ -511,6 +511,7 @@ const sv: Record<string, string> = {
   "txt_create_account": "Skapa konto",
   "txt_registering": "Skapar konto...",
   "txt_register_failed": "Registrering misslyckades",
+  "txt_web_crypto_unavailable": "Säker webbläsarkryptografi är inte tillgänglig. Öppna NodeWarden via HTTPS i en webbläsare som stöds.",
   "txt_create_folder": "Skapa mapp",
   "txt_create_folder_failed": "Misslyckades med att skapa mapp",
   "txt_create_item_failed": "Misslyckades med att skapa objekt",

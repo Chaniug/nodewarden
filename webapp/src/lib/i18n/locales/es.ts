@@ -511,6 +511,7 @@ const es: Record<string, string> = {
   "txt_create_account": "Crear cuenta",
   "txt_registering": "Creando cuenta...",
   "txt_register_failed": "Error al registrarse",
+  "txt_web_crypto_unavailable": "La criptografía segura del navegador no está disponible. Abra NodeWarden mediante HTTPS en un navegador compatible.",
   "txt_create_folder": "Crear carpeta",
   "txt_create_folder_failed": "Error al crear carpeta",
   "txt_create_item_failed": "Error al crear elemento",
