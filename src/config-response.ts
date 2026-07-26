@@ -31,6 +31,7 @@ export function buildConfigResponse(origin: string) {
     communication: null,
     settings: {
       disableUserRegistration: false,
+      suppressOnboardingInterstitials: false,
     },
     _icon_service_url: buildIconServiceTemplate(origin),
     _icon_service_csp: buildIconServiceCsp(origin),
