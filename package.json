@@ -48,7 +48,8 @@
     }
   },
   "overrides": {
-    "undici": ">=7.28.0",
+    "nanoid": "3.3.17",
+    "undici": "8.9.0",
     "@babel/core": ">=7.29.6",
     "esbuild": ">=0.28.1",
     "ws": "8.21.0",
